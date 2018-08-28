@@ -55,7 +55,7 @@ public class SystemWebSocketHandler implements WebSocketHandler {
     }
 
     @Override
-    public void handleMessage(WebSocketSession wss, WebSocketMessage<?> wsm) throws Exception {
+    public void handleMessage(WebSocketSession wss, WebSocketMessage<?> wsm)throws Exception {
 
         if (wsm.getPayloadLength() == 0) {
             return;
@@ -76,7 +76,7 @@ public class SystemWebSocketHandler implements WebSocketHandler {
 
         try {
             message = mapper.readValue(payload, Message.class);
-        } catch (JsonParseException e) {
+        } catch (Exception e) {
 
             wss.sendMessage(new TextMessage("message is valid"));
             return;
@@ -91,6 +91,12 @@ public class SystemWebSocketHandler implements WebSocketHandler {
         message.setMsgId(UUID.randomUUID().toString());
 
         Thread.sleep(1000);
+
+        if(!socketSessionMap.containsKey(message.getToId())){
+
+            wss.sendMessage(new TextMessage(message.getToId()+" is not online"));
+            return;
+        }
 
         broadcastMessageToUsers(userSocketSessionMap.get(message.getToId()), new TextMessage(mapper.writeValueAsBytes(message)));
 

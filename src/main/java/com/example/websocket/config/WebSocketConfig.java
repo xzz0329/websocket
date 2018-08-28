@@ -15,14 +15,17 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocketConfigurer {
 
-    @Autowired
-    private SystemWebSocketHandler systemWebSocketHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
-        webSocketHandlerRegistry.addHandler(systemWebSocketHandler, "/wss").addInterceptors(new HandShakeInterceptor()).setAllowedOrigins("*");
+        webSocketHandlerRegistry.addHandler(systemWebSocketHandler(), "/wss").addInterceptors(new HandShakeInterceptor()).setAllowedOrigins("*");
 
         System.out.println("websocketIntercept has registed");
+    }
+
+    private SystemWebSocketHandler systemWebSocketHandler(){
+
+        return new SystemWebSocketHandler();
     }
 
 
